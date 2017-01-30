@@ -2,6 +2,15 @@
 
 This plugin provides the ability to break a large list of posts into a paginated version. When applied to a single template page, this plugin will generate as many sibling pages as needed. For example, `posts.html` as well as `posts-2.html`, `posts-3.html`, etc. If requested can also generate `posts-all.html`, which is the page that would be generated _without enabling this plugin at all_.
 
+
+## Installation
+
+In an existing ergo project folder:
+
+```
+ergo plugin install paginate
+```
+
 ## Usage Sample
 
 This plugin requires the use of two elements in order to work: 
