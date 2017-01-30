@@ -11,6 +11,18 @@ In an existing ergo project folder:
 ergo plugin install paginate
 ```
 
+## Options 
+
+You may specify the following options in your `config.ergo.js`:
+
+```
+default_fields: {
+	paginate_count:20, // paginate 20 items per page (default is 10)
+	paginate_nextprev: true, // show the previous and next buttons (default is true)
+	...
+}
+```
+
 ## Usage Sample
 
 This plugin requires the use of two elements in order to work: 

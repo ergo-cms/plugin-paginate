@@ -1,6 +1,6 @@
 var path = require('path');
 
-var l = function(str) { console.log('paginator: '+str); }
+var l = function() { } //function(str) { console.log('paginator: '+str); }
 
 function _extend(origin) { // shallow extend only
 	for (var a=1; a<arguments.length; a++) {
@@ -22,6 +22,11 @@ function _empty_paginator(list) { return list; }
 
 function _paginate_filter(list, data, params, data_name) {
 	params.count = params.count || data.paginate_count || 10;
+	params.nextprev = params.nextprev;
+	if (params.nextprev===undefined && data.paginate_nextprev!==undefined)
+		params.nextprev = data.paginate_nextprev;
+	if (params.nextprev===undefined) 
+		params.nextprev=true;
 	//l('size=' + list.length)
 	if (list.length<=params.count)
 		return list; // nothing to do!
@@ -49,19 +54,23 @@ function _paginate_filter(list, data, params, data_name) {
 	for (var i=0; i<list.length; i+=params.count) {
 		// create a virtual page and add it
 		var page = parseInt(i / params.count, 10) + 1;
-		//var page_content = '{{#paginator_container}}' + template + '{{/paginator_container}}'; 
+		var pageIdx = page-1;
+
 		var paginated = {
-			first:items[0],
-			last:items[items.length-1],
-			item:JSON.parse(JSON.stringify(items))
+			item:JSON.parse(JSON.stringify(items)) // make a copy of the list
 		}
-		var current = paginated.item[page-1];
-		//if (page>1)
-		//	paginated.item[page-2].active = false; // deactivate previous entry
+		paginated.first = pageIdx>0 ? paginated.item[0] : null;
+		paginated.last  = pageIdx<items.length-1 ? paginated.item[items.length-1] : 0;
+		paginated.prev  = params.nextprev && pageIdx>0 ? paginated.item[pageIdx-1] : null;
+		paginated.next  = params.nextprev && pageIdx<items.length-1 ? paginated.item[pageIdx+1] : null;
+		var current = paginated.item[pageIdx];
 		current.active = true;
+
 		var fields = _extend({}, data, {paginated:paginated})
 		fields[data_name] = list.slice(i, i+params.count);
 		fields.paginate = _empty_paginator; // because we've still got '@paginate' in the template, we make sure we don't become reentrant
+		fields.paginate_nextprev = params.nextprev;
+
 		l('page ' + page + ' =>' + current.uri + ' for fields[' + data_name+']=' + fields[data_name].length)
 		_env.addVirtualFile(fields, current.uri, base_renderer_name)
 	}
@@ -92,8 +101,9 @@ module.exports = {
 	active: true,
 	init: function(env, options) { _env = env; },
 	default_fields: {
-		has_paginator: true, // a simple signal to themes that we're available (probably not very useful, however)
-		paginate_count:5,
+		has_paginator: true, // a simple signal to themes that we're available (probably not very useful however)
+		//paginate_count:10,
+		//paginate_nextprev:true,
 		paginate: function(list, params, list_name) { return _paginate_filter(list, this, params, list_name) }
 	}
 }
