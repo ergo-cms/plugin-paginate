@@ -1,3 +1,22 @@
+
+module.exports = {
+	name: "Ergo Paginator Plugin",
+	url: "https://github.com/ergo-cms/plugin-paginator",
+	active: true,
+	version: "1.0.1",
+	init: function(env, options) { _env = env; },
+	default_fields: {
+		has_paginator: true, // a simple signal to themes that we're available (probably not very useful however)
+		//paginate_count:10,
+		//paginate_nextprev:true,
+		paginate: function(list, params, list_name) { return _paginate_filter(list, this, params, list_name) }
+	}
+}
+
+
+
+
+
 var path = require('path');
 
 //var logColor = "\x1b[34m";
@@ -244,18 +263,3 @@ function _paginate_filter(list, data, params, data_name) {
 	else
 		return _paginate_filter_simple(list, data, params, data_name);
 }
-
-module.exports = {
-	name: "Ergo Paginator Plugin",
-	url: "https://github.com/ergo-cms/plugin-paginator",
-	active: true,
-	init: function(env, options) { _env = env; },
-	default_fields: {
-		has_paginator: true, // a simple signal to themes that we're available (probably not very useful however)
-		//paginate_count:10,
-		//paginate_nextprev:true,
-		paginate: function(list, params, list_name) { return _paginate_filter(list, this, params, list_name) }
-	}
-}
-
-
